@@ -20,3 +20,8 @@ type controls struct {
 	heater     int
 	humidifier int
 }
+type pixel struct {
+	red   uint8
+	green uint8
+	blue  uint8
+}
