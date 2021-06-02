@@ -15,8 +15,6 @@ import (
 )
 
 const (
-	on           = 1
-	off          = 0
 	lowestTemp   = -10.0
 	highestTemp  = 50.0
 	lowestHumid  = 0
@@ -112,34 +110,22 @@ func getReadings() readings {
 	}
 }
 
-func setTargets() setPoints {
+func getTargets() setPoints {
 	return setPoints{
 		temperature: 25.0,
 		humidity:    55.0,
 	}
 }
 
-func setControls(target setPoints, rdata readings) controls {
-	state := controls{}
-
-	if rdata.temperature < target.temperature {
-		state.heater = on
-	} else {
-		state.heater = off
+func getControls(target setPoints, rdata readings) controls {
+	return controls{
+		heater:     rdata.temperature < target.temperature,
+		humidifier: rdata.humidity < target.humidity,
 	}
-
-	if rdata.humidity < target.humidity {
-		state.humidifier = on
-	} else {
-		state.humidifier = off
-	}
-
-	return state
 }
 
 func displayReadings(s tcell.Screen, x, y int, rdata readings) {
 	currentTime := time.Now()
-
 	printmv(s, x, y, defStyle, fmt.Sprintf(
 		"Unit: %s %s",
 		getId(),
@@ -165,7 +151,7 @@ func displayTargets(s tcell.Screen, x, y int, spts setPoints) {
 
 func displayControls(s tcell.Screen, x, y int, ctrl controls) {
 	printmv(s, x, y, defStyle, fmt.Sprintf(
-		"Controls     Heater: %d       Humidifier: %d\n\n",
+		"Controls     Heater: %-3s     Humidifier: %-3s",
 		ctrl.heater,
 		ctrl.humidifier,
 	))
@@ -180,7 +166,6 @@ func checkExit(s tcell.Screen) {
 		switch ev := s.PollEvent().(type) {
 		case *tcell.EventResize:
 			s.Sync()
-			//displayHelloWorld(s)
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyRune && ev.Rune() == 'q' || ev.Rune() == 'Q' {
 				return

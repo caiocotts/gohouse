@@ -17,11 +17,20 @@ type setPoints struct {
 }
 
 type controls struct {
-	heater     int
-	humidifier int
+	heater     state
+	humidifier state
 }
 type pixel struct {
 	red   uint8
 	green uint8
 	blue  uint8
+}
+
+type state bool
+
+func (s state) String() string {
+	if s {
+		return "on"
+	}
+	return "off"
 }
